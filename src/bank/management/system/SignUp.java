@@ -3,9 +3,11 @@ package bank.management.system;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Random;
 
-public class SignUp extends JFrame {
+public class SignUp extends JFrame implements ActionListener {
     String[] estado_civil = {"Solteiro", "Casado", "Divorciado", "Viúvo"};
     String[] estado = {"Acre", "Alagoas", "Amapá", "Amazonas", "Bahia", "Ceará", "Distrito Federal", "Espírito Santo", "Goiás", "Maranhão", "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Pará", "Paraíba", "Paraná", "Pernambuco", "Piauí", "Rio de Janeiro", "Rio Grande do Norte", "Rio Grande do Sul", "Rondônia", "Roraima", "Santa Catarina", "São Paulo", "Sergipe", "Tocantins"};
     Random rand = new Random();
@@ -15,6 +17,8 @@ public class SignUp extends JFrame {
     JDateChooser dateChooser;
     JRadioButton radioMale, radioFemale;
     JComboBox comboBox_estado_civil, comboBox_estado;
+
+    JButton next;
 
     SignUp(){
         super("Formulario de Cadastro");
@@ -151,19 +155,58 @@ public class SignUp extends JFrame {
         comboBox_estado.setBounds(300, 640, 400, 30);
         add(comboBox_estado);
 
-
-
-
-
-
-
-
+        next = new JButton("Próximo");
+        next.setFont(new Font("Raleway", Font.BOLD, 14));
+        next.setBackground(Color.BLACK);
+        next.setForeground(Color.WHITE);
+        next.setBounds(600, 700, 100, 30);
+        next.addActionListener(this);
+        add(next);
 
         getContentPane().setBackground(new Color(222, 255, 228));
         setLayout(null);
         setSize(900, 800);
         setLocation(460, 40);
         setVisible(true);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String formno = first;
+        String name = textName.getText();
+        String fname = textFname.getText();
+        String date = ((JTextField) dateChooser.getDateEditor().getUiComponent()).getText();
+        String gender = null;
+        if(radioMale.isSelected()) {
+            gender = "Masculino";
+        }
+        else if(radioFemale.isSelected()){
+            gender = "Feminino";
+        }
+
+        String email = textEmail.getText();
+        String estado_civil = (String) comboBox_estado_civil.getSelectedItem();
+        String endereco = textAddress.getText();
+        String cidade = textCity.getText();
+        String codigo_postal = textCodigoPostal.getText();
+        String estado = (String) comboBox_estado.getSelectedItem();
+
+        try{
+            if(textName.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "Preencha o campo Nome");
+            }
+            else{
+                Conn conn = new Conn();
+                String qry = "insert into signup values('"+formno+"','"+name+"', '"+fname+"', '"+date+"', '"+gender+"', '"+email+"', '"+estado_civil+"', '"+endereco+"', '"+cidade+"', '"+codigo_postal+"', '"+estado+"')";
+                conn.statement.executeUpdate(qry);
+                new Signup2();
+                setVisible(false);
+            }
+        }
+        catch (Exception E){
+            E.printStackTrace();
+        }
+
     }
 
     public static void main(String[] args) {
